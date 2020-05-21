@@ -1,32 +1,37 @@
 import asyncio
 import websockets
 import json
-
-import numpy as np
 from PIL import Image
 import base64
 from io import BytesIO
 
-def formatBase64AndCallWebSocket(uri, image_numpy):
+
+def formatBase64AndCallWebSocket(uri, messageType, image_numpy):
     image_pil = Image.fromarray(image_numpy)
     buffered = BytesIO()
     image_pil.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue())
-    print(img_str)
-    callWebSocket(uri, img_str)
-    print('Image sent')
+    callWebSocket(uri, messageType, img_str)
 
-def callWebSocket(uri, img_str):
-	asyncio.get_event_loop().run_until_complete(
-		sendSocketMessage(uri, img_str))
+def callWebSocket (uri, messageType, message):
+    asyncio.get_event_loop().run_until_complete(
+		sendSocketMessage(uri, messageType, message))
 
-async def sendSocketMessage(uri, img_str):
+async def sendSocketMessage(uri, messageType, message):
     async with websockets.connect(uri) as websocket:
-        data = {"message": str(img_str)}
-        datasend = json.dumps(data)
-        try:
-            await websocket.send(datasend)
-            await websocket.recv()
-        except Exception:
-            print('error')
-            exit(1)
+        data = {messageType: message}
+        await websocket.send(json.dumps(data))
+
+def callWebSocketJson (uri, data):
+	asyncio.get_event_loop().run_until_complete(
+		sendSocketMessage(uri, data))
+
+async def sendJsonSocketMessage(uri, data):
+    async with websockets.connect(uri) as websocket:
+        await websocket.send(json.dumps(data))
+
+# This is how you will have to encode the images to sent them back after creating the new satellite
+# import base64
+# encoded_string = base64.b64encode(image_file.read())
+
+# callWebSocket("ws://fierce-dawn-73363.herokuapp.com", "der base64 code von deinem image ")
