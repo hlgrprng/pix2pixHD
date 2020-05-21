@@ -12,6 +12,7 @@ try:
 except ImportError:
     from io import BytesIO         # Python 3.x
 
+
 class Visualizer():
     def __init__(self, opt):
         # self.opt = opt
