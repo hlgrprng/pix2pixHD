@@ -1,3 +1,7 @@
+# call this program from the pix2pixHD root path like:
+# ~/Documents/hlgrprng/pix2pixHD$ python websocket/webSocketReceive.py 
+
+
 import asyncio
 from functools import partial
 
