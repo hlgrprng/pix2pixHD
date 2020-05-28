@@ -7,7 +7,7 @@ import base64
 import cv2
 import numpy as np
 from datetime import datetime
-import os.path
+import os
 from os import path
 
 imageTestFolder = 'datasets/cityscapes/test_A/'
@@ -26,16 +26,23 @@ async def receiveWebsocket():
         msgFromServer = await websocket.recv()
         try:
             parsedMsg = json.loads(msgFromServer)
-            if 'image' in parsedMsg and 'cropTime' in parsedMsg:
+            if 'image' in parsedMsg and 'cropTime' in parsedMsg and 'folderName' in parsedMsg:
                 img = readb64(parsedMsg['image'])
                 imageName = parsedMsg['cropTime'] + '.jpg'
+                folderName = parsedMsg['folderName'] + '/'
                 if (path.exists(imageTestFolder)):
-                    cv2.imwrite(imageTestFolder + '/' + imageName, img)
+                    if not (path.exists(imageTestFolder + folderName)):
+                        os.mkdir(imageTestFolder + folderName)
+
+                    cv2.imwrite(imageTestFolder + folderName + '/' + imageName, img)
                     print('Image received and saved')
                 else:
                     print('Wrong folder path: ', imageTestFolder)
+            elif 'imageDone' in parsedMsg and 'folderName' in parsedMsg:
+                folderWithImages = imageTestFolder + parsedMsg['folderName'] + '/'
+                #os.system("cd .. && python test.py --name cityscapes --label_nc 0 --no_instance")
             else:
-                print('No image attribute in message', parsedMsg)
+                print('Could not find sufficient attributes', parsedMsg)
         except Exception as exc:
             print('That was not a valid geoJson sent by client: ', msgFromServer)
 
