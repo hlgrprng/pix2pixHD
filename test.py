@@ -1,4 +1,4 @@
-### Copyright (C) 2017 NVIDIA Corporation. All rights reserved. 
+### Copyright (C) 2017 NVIDIA Corporation. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import os
 from collections import OrderedDict
@@ -31,12 +31,12 @@ if not opt.engine and not opt.onnx:
         model.half()
     elif opt.data_type == 8:
         model.type(torch.uint8)
-            
+
     if opt.verbose:
         print(model)
 else:
     from run_engine import run_trt_engine, run_onnx
-    
+
 for i, data in enumerate(dataset):
     if i >= opt.how_many:
         break
@@ -52,18 +52,18 @@ for i, data in enumerate(dataset):
         torch.onnx.export(model, [data['label'], data['inst']],
                           opt.export_onnx, verbose=True)
         exit(0)
-    minibatch = 1 
+    minibatch = 1
     if opt.engine:
         generated = run_trt_engine(opt.engine, minibatch, [data['label'], data['inst']])
     elif opt.onnx:
         generated = run_onnx(opt.onnx, opt.data_type, minibatch, [data['label'], data['inst']])
-    else:        
+    else:
         generated = model.inference(data['label'], data['inst'], data['image'])
-        
+
     visuals = OrderedDict([('input_label', util.tensor2label(data['label'][0], opt.label_nc)),
                            ('synthesized_image', util.tensor2im(generated.data[0]))])
     img_path = data['path']
     print('process image... %s' % img_path)
-    visualizer.save_images(webpage, visuals, img_path)
+    visualizer.send_images(webpage, visuals, img_path)
 
 webpage.save()
