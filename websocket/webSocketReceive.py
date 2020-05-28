@@ -10,7 +10,8 @@ from datetime import datetime
 import os
 from os import path
 
-imageTestFolder = 'datasets/cityscapes/test_A/'
+imageFolder = 'img_received/'
+imageSubFolder = 'test_a/'
 
 def readb64(uri):
    encoded_data = uri.split(',')[1]
@@ -29,18 +30,19 @@ async def receiveWebsocket():
             if 'image' in parsedMsg and 'cropTime' in parsedMsg and 'folderName' in parsedMsg:
                 img = readb64(parsedMsg['image'])
                 imageName = parsedMsg['cropTime'] + '.jpg'
-                folderName = parsedMsg['folderName'] + '/'
-                if (path.exists(imageTestFolder)):
-                    if not (path.exists(imageTestFolder + folderName)):
-                        os.mkdir(imageTestFolder + folderName)
+                folderName = parsedMsg['folderName']
+                if (path.exists(imageFolder)):
+                    if not (path.exists(imageFolder + folderName)):
+                        os.mkdir(imageFolder + folderName)
+                        os.mkdir(imageFolder + folderName + '/' + imageSubFolder)
 
-                    cv2.imwrite(imageTestFolder + folderName + '/' + imageName, img)
+                    cv2.imwrite(imageFolder + folderName + '/' + imageSubFolder + '/' + imageName, img)
                     print('Image received and saved')
                 else:
-                    print('Wrong folder path: ', imageTestFolder)
+                    print('Wrong folder path: ', imageFolder)
             elif 'imageDone' in parsedMsg and 'folderName' in parsedMsg:
-                folderWithImages = imageTestFolder + parsedMsg['folderName'] + '/'
-                #os.system("cd .. && python test.py --name cityscapes --label_nc 0 --no_instance")
+                folderWithImages = imageFolder + parsedMsg['folderName'] + '/'
+                os.system("cd .. && python test.py --name cityscapes --label_nc 0 --no_instance")
             else:
                 print('Could not find sufficient attributes', parsedMsg)
         except Exception as exc:
