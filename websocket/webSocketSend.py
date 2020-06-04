@@ -5,13 +5,17 @@ from PIL import Image
 import base64
 from io import BytesIO
 
-
-def formatBase64AndCallWebSocket(uri, messageType, image_numpy):
+def getBase64FromImageNumpy(image_numpy):
     image_pil = Image.fromarray(image_numpy)
     buffered = BytesIO()
     image_pil.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
+    return base64.b64encode(buffered.getvalue())
+
+def formatBase64AndCallWebSocket(uri, messageType, image_numpy):
+    img_str = getBase64FromImageNumpy(image_numpy)
     callWebSocket(uri, messageType, img_str)
+
+# Packing JSON with {messageType: message}
 
 def callWebSocket (uri, messageType, message):
     asyncio.get_event_loop().run_until_complete(
@@ -22,9 +26,11 @@ async def sendSocketMessage(uri, messageType, message):
         data = {messageType: message}
         await websocket.send(json.dumps(data))
 
+# Sending complete JSON
+
 def callWebSocketJson (uri, data):
 	asyncio.get_event_loop().run_until_complete(
-		sendSocketMessage(uri, data))
+		sendJsonSocketMessage(uri, data))
 
 async def sendJsonSocketMessage(uri, data):
     async with websockets.connect(uri) as websocket:

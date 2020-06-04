@@ -64,6 +64,7 @@ for i, data in enumerate(dataset):
                            ('synthesized_image', util.tensor2im(generated.data[0]))])
     img_path = data['path']
     print('process image... %s' % img_path)
-    visualizer.send_images(webpage, visuals, img_path)
+    # visualizer.save_images(webpage, visuals, img_path)
+    visualizer.send_images(visuals)
 
 webpage.save()

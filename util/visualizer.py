@@ -4,9 +4,10 @@ import numpy as np
 import os
 import ntpath
 import time
+from datetime import datetime
 from . import util
 from . import html
-from websocket.webSocketSend import formatBase64AndCallWebSocket
+from websocket.webSocketSend import callWebSocketJson, getBase64FromImageNumpy
 import scipy.misc
 try:
     from StringIO import StringIO  # Python 2.7
@@ -133,23 +134,11 @@ class Visualizer():
             links.append(image_name)
         webpage.add_images(ims, txts, links, width=self.win_size)
 
-    # send image to the url via websockets
-    def send_images(self, webpage, visuals, image_path):
-        image_dir = webpage.get_image_dir()
-        short_path = ntpath.basename(image_path[0])
-        name = os.path.splitext(short_path)[0]
-
-        webpage.add_header(name)
-        ims = []
-        txts = []
-        links = []
-
+    # send image to the url via websocket
+    def send_images(self, visuals):
+        image_time = str(datetime.now().strftime("%m%d%Y%H%M%S")).split('.')[0]
+        i = 0
         for label, image_numpy in visuals.items():
-            image_name = '%s_%s.jpg' % (name, label)
-            save_path = os.path.join(image_dir, image_name)
-            formatBase64AndCallWebSocket("ws://fierce-dawn-73363.herokuapp.com", image_numpy)
-
-            #ims.append(image_name)
-            #txts.append(label)
-            #links.append(image_name)
-        #webpage.add_images(ims, txts, links, width=self.win_size)
+            image_json = {'cropTime': image_time + '-' + i, 'image': getBase64FromImageNumpy(image_numpy)}
+            callWebSocketJson("ws://fierce-dawn-73363.herokuapp.com", image_json)
+            i += 1
