@@ -139,6 +139,6 @@ class Visualizer():
         image_time = str(datetime.now().strftime("%m%d%Y%H%M%S")).split('.')[0]
         i = 0
         for label, image_numpy in visuals.items():
-            image_json = {'cropTime': image_time + '-' + str(i), 'image': getBase64FromImageNumpy(image_numpy)}
+            image_json = {'cropTime': image_time + '-' + str(i), 'imageResult': getBase64FromImageNumpy(image_numpy)}
             callWebSocketJson("ws://fierce-dawn-73363.herokuapp.com", image_json)
             i += 1
