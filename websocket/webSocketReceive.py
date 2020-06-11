@@ -47,7 +47,7 @@ async def receiveWebsocket():
             elif 'imageDone' in parsedMsg and 'folderName' in parsedMsg:
                 folderWithImages = imageFolder + parsedMsg['folderName'] + '/'
                 #os.system("cd .. && python test.py --name cityscapes --label_nc 0 --no_instance")
-                os.system("python test.py --dataroot ../img_received/" + parsedMsg['folderName'] + " --results_dir ../results --name cityscapes --label_nc 0 --no_instance")
+                os.system("python test.py --dataroot img_received/" + parsedMsg['folderName'] + " --results_dir ../results --name cityscapes --label_nc 0 --no_instance")
             else:
                 print('Could not find sufficient attributes', parsedMsg)
         except Exception as exc:
