@@ -5,11 +5,22 @@ from PIL import Image
 import base64
 from io import BytesIO
 
+ENCODING = 'utf-8'
+
 def getBase64FromImageNumpy(image_numpy):
     image_pil = Image.fromarray(image_numpy)
     buffered = BytesIO()
     image_pil.save(buffered, format="JPEG")
-    return base64.b64encode(buffered.getvalue())
+
+    # base64 encode read data
+    # result: bytes
+    base64_bytes = base64.b64encode(buffered.getvalue())
+
+    # decode these bytes to text
+    #  string (in utf-8)
+    base64_string = base64_bytes.decode(ENCODING)
+
+    return base64_string
 
 def formatBase64AndCallWebSocket(uri, messageType, image_numpy):
     img_str = getBase64FromImageNumpy(image_numpy)
