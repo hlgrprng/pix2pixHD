@@ -135,8 +135,7 @@ class Visualizer():
         webpage.add_images(ims, txts, links, width=self.win_size)
 
     # send image to the url via websocket
-    def send_images(self, visuals):
-        image_time = str(datetime.now().strftime("%m%d%Y%H%M%S")).split('.')[0]
+    def send_images(self, visuals, image_time):
         i = 0
         for label, image_numpy in visuals.items():
             image_json = {'cropTime': image_time + '-' + str(i), 'imageResult': getBase64FromImageNumpy(image_numpy)}

@@ -24,6 +24,8 @@ visualizer = Visualizer(opt)
 web_dir = os.path.join(opt.results_dir, opt.name, '%s_%s' % (opt.phase, opt.which_epoch))
 webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.which_epoch))
 
+process_image_time = str(datetime.now().strftime("%m%d%Y%H%M%S")).split('.')[0]
+
 # test
 if not opt.engine and not opt.onnx:
     model = create_model(opt)
@@ -65,6 +67,6 @@ for i, data in enumerate(dataset):
     img_path = data['path']
     print('process image... %s' % img_path)
     # visualizer.save_images(webpage, visuals, img_path)
-    visualizer.send_images(visuals)
+    visualizer.send_images(visuals, process_image_time)
 
 webpage.save()
