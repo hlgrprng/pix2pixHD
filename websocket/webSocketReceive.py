@@ -15,7 +15,7 @@ import os
 from os import path
 
 imageFolder = 'img_received/'
-imageSubFolder = 'test_A/'
+imageSubFolder = 'test_a/'
 
 def readb64(uri):
    encoded_data = uri.split(',')[1]
