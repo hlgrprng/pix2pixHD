@@ -4,7 +4,6 @@ import numpy as np
 import os
 import ntpath
 import time
-from datetime import datetime
 from . import util
 from . import html
 from websocket.webSocketSend import callWebSocketJson, getBase64FromImageNumpy
